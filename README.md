@@ -1,0 +1,2 @@
+# civclassic
+CivClassic FactoryMod Config
