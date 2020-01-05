@@ -14,401 +14,6 @@ disable_nether: false
 use_recipe_yamlidentifiers: true
 log_inventories: true
 
-
-#FactoryMod configuration file
-
-#FactoryMod is a Spigot plugin, which allows players to setup predefined factories for an item cost. There are various
-#factories with different purposes and pretty much everything about them is configurable. Their configuration is 
-#handled within this file. Take great care to ensure that your configurations follow exactly the documentation provided
-#here, otherwise unwanted effects/crashes and run time exceptions may occur.
-
-#----------------------------------------------------------------------------------------------------------------------
-
-#Specifying items:
-
-#Very often in this config you will have to specify items for a configuration. All item specifications are lists of 
-#configurations, which contain information about the actual item, like this:
-
-#inputmaterials:
-#   inputmat1:
-#       material: STONE
-#   inputmat345FF:
-#       material: DIRT
-
-#Ensure that the identifer (here inputmat1 or inputmat345FF) all have the same intendation and never use duplicate
-#identifers on the same level. Duplicate identifers which belong to a different configuration section are a bad habit,
-#but should still work, while duplicate identifers on the same level will definitely not lead to the result you desire.
-#This applies for every configuration option and not only for items. When you are required to specify a list of items
-#you can also just put the option for it there, but not actually any identifers below it to list items and it will
-#result in no cost/output.
-
-#An example item config utilizing all possiblities could look like this:
-
-#inputmat1:
-#   material: STONE
-#   durability: 3
-#   amount: 456
-#   name: SuperSpecialStone
-#   lore:
-#    - First lore line
-#    - Even more lore
-#   enchants:
-#       enchantidentifier1:
-#           enchant: SILK_TOUCH
-#           level: 1
-#       enchantgharbbl:
-#           enchant: DAMAGE_ALL
-#           level: 5
-
-
-#material requires you to specify the type of the item. Use Spigot's official item identifers here, a full list of those
-#can be found here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
-
-#durability allows you to specify the durability of the item. Note that this is not only limited to the durability of tools
-#or armour, but instead the durability is also used to create different variations of the same material. For example orange
-#wool is actually just white wool with a durability of 1. If this option is not specified it will default to 0, which is also
-#minecraft's default durability for items. If you don't want to limit an item to a specific durability, but for example want to
-#require any type of wool as an input, use -1 as durability. Make sure to only use this for inputs though, if you let a factory
-#output an itemstack for players with a durability of -1, the item will be glitched. For a full list of all items and their 
-#durabilities use this site: http://minecraft-ids.grahamedgecombe.com/
-
-#amount allows you to specify the amount of the item, this isn't limited to 64 or whatever the maximum stack size of that
-#item is, it can be any number (assuming it fits into an int). If not specfied this option will default to 1
-
-#name allows you to define a custom name for this item, if this option is not set the item will have its vanilla name
-
-#lore allows you to list lore which is added to the item. There is no limit to the lines of lore here, but after too many the
-#minecraft client will stop display them properly. Defining lore is completly optional.
-
-#Finally enchants allows you to list all the enchants wanted on this item, each enchant requires it's own config identifer.
-
-#The two options requires per enchant are relatively straight forward, first of all you need to specify the enchantment type
-#with it's spigot identifer. https://hub.spigotmc.org/javadocs/spigot/org/bukkit/enchantments/Enchantment.html provides a
-#full list of those. Second you will need to specify the level you want the desired enchantment to be, this may exceed the
-#possibilites of vanilla without causing problems.
-
-
-#You can also create items with specific meta data, currently supported are anything storing potion data, dyed leather armour
-#and custom nbt tags
-
-#For potion data (so for potions, splash potions, linering potions and tipped arrows) you can specify an additional section 
-#like this:
-
-#examplePot:
-# material: POTION
-# potion_effects:
-#   type: LUCK
-#   upgraded: true
-#   extended: true
-#   custom_effects:
-#     exampleEffect1:
-#       type: SPEED
-#       duration: 1m
-#       amplifier: 1
-
-#Each potion always has one default effect and as many additional custom effects as desired
-
-#type specifies the look of the potion and the base type of effect that will be applied by the potion. Not all possible status
-#effects can be used here, but only the ones that have PotionData, as listed here: 
-#https://hub.spigotmc.org/javadocs/spigot/org/bukkit/potion/PotionType.html
-#If not specified the type will default to AWKWARD
-
-#upgraded specifies whether the default potion effect on the item is upgraded or not, per default this is false
-
-#extended specifies whether the default potion effect on this item is extended or not, per default this is false
-
-#custom_effects allows you to list other potion effects that are tied to this item, but don't affect it's item model, which is 
-#determined by the primary potion effect
-
-#To make dyed leather armour, two different formats are supported. The first one looks like this:
-
-#exampleItem:
-# material: LEATHER_HELMET
-# color:
-#   red: 255
-#   blue: 0
-#   green: 255
-
-#The additional color section here has an option for each part of an RGB color, which is then applied on the item. All values
-#must be within 0 and 255
-
-#The other way to specify color of a leather item is directly through a hexadecimal number representing the RGB color like this:
-
-#exampleItem2:
-# material: LEATHER_BOOTS
-# color: FF00FF
-
-#Instead of using color as config identifier, you can as well just use it as option to directly specify the color in hex
-
-#----------------------------------------------------------------------------------------------------------------------
-#General
-
-#This section allows you to define global default values and some general stuff. 
-
-#Additionally you can specify default options here, which are applied to all factories which use this option, unless
-#you chose to overwrite the default for a specific factory, in that case the option specified in the factories config 
-#will apply to it.
-
-#The first option here is default_update_time. The update time describes how often a factory is ticked, ergo how often
-#it checks whether it still has enough fuel, enough other resources to run and so on. This is basically the smallest
-#time unit within your factory can possibly react and all other time values your factory works with should be multiples
-#of this value. If they are not a multiple of this value, their de-facto value will be the next higher multiple of the
-#update time, simply because whatever effect they have can only be applied if the factory is actually ticked. Note that
-#this value highly influences the performance of this plugin, if FactoryMod is consuming more server power than you want
-#it to, the first step should be to make this value higher. Recommended value is 1 second
-
-#default_update_time: 1s
-
-
-#With the option default_fuel you can specify the default fuel for all factories which are consuming fuel in a furnace
-#while running. This doesn't have to be a vanilla furnace fuel, but can be any item instead. A factory may chose to over
-#write this option
-
-#default_fuel:
-#    charcoal:
-#        material: COAL
-#        durability: 1
- 
-
-#default_fuel_consumption_intervall specifies a default for how often factories consume fuel. Basically every time a 
-#factory which consumes fuel has run for the time specified here, one fuel unit will be consumed. This value should
-#always be a multiple of the updatetime and a factory may chose to specify it's own value and not use the default value
-
-#default_fuel_consumption_intervall: 2s
-
-#default_health specifies a default for how much health a factory has. Factories will continuously lose health over time and have
-#to be repaired before they can be used again, once they are at 0 health
-#default_health: 10000
-
-#default_menu_factory allows you to specify the menu for which factory will be opened when a player runs /fm without 
-#specifying a factory. If this is not specified and the player runs "/fm" one will be picked randomly.
-#default_menu_factory:
-
-#As a debug mode or to prevent additional information when tracking down bugs this plugin can log all of its inventory 
-#interactions and the full inventories at that point, if desired. If this option is not specified it will default to true
-
-#log_inventories: true
-
-
-#Additionally this plugin can disable vanilla nether portals. This isn't really part of the plugin's core functionality,
-#but it was picked up from the first implementation of FactoryMod and stayed here after it's rewrite. Deal with it.
-#disable_nether: false
-
-
-#When FCCs are in disrepair they will be removed after a set amount of time, which can be specified here
-#default_break_grace_period: 7d
-
-
-#How often factories are passively decayed
-#decay_intervall: 1h
-
-#How much health is decayed from factories by default each damaging run
-#default_decay_amount: 21
-
-#Whether the yaml identifier or the factory name should be used when assigning recipes to factories, default to false
-#use_recipe_yamlidentifiers: false
-
-#How often factory data is saved automatically. Recommended value and default is 15 minutes. Set to -1 to disable
-#saving_intervall: 15m
-
-#----------------------------------------------------------------------------------------------------------------------
-#Factories
-
-#The main part of this plugin's functionality will be defined by this section as it specifies most of the configuration
-#for your factories. Under the option factories you will be required to specify each factories configuration, each factory
-#needs it's own identifier here, an example could look like this:
-
-#factories:
-#   IAmAnIdentifer:
-#       type: FCC
-#       name: Stone Smelter
-#   SoAmI:
-#       type: PIPE
-#       name: Pipinator
-
-#All factories have in common that they require you to define a type and a name. The type must be one of the predefined 
-#options explained further below to specify the physical appearance and the broad functionality of the factory.
-#The name can be any string, which will be used to identify this factory at a later point. There may be many different
-#factories of the same type with different names with completly different configurations, but ingame factories with
-#the same name are guaranteed to have the same functionality. Because of that NEVER EVER duplicate factory names, not 
-#even if their type is different.
-
-#Currently there are three different types of factories:
-
-#1. FCC
-
-#FCC is an acronym for FurnaceCraftingTableChest, which is the "classic" factory and what factories used to be in the first
-#version of FactoryMod before its rewrite. As you might guess it consist of a crafting table, a furnace and a chest. The
-#crafting table has to be in the middle between the furnace and the chest either vertical or horizontal. Those factories
-#use an item which is burned in furnace as fuel to execute recipes, which usually use up some sort of item in the chest
-#to produce another. A factory can have as many recipes as you want, the details for those are defined further down in the
-#config. The identifier used for this type of factory in the config is FCC. An example config to explain every possible
-#option for this factory:
-
-#smelteridentiferbla:
-#   type: FCC
-#   name: Smelter
-#   updatetime: 2s
-#   health: 20000
-#   grace_period: 14d
-#   decay_amount: 40
-#   fuel:
-#       fuelidentifier:
-#           material: COAL
-#           durability: 1
-#   fuel_consumption_intervall: 10s
-#   setupcost:
-#       dirt:
-#           material: DIRT
-#           amount: 64
-#       stone:
-#           material: STONE
-#           amount: 64
-#   recipes:
-#    - Smelt iron ore
-#    - Smelt diamond ore
-#    - Smelt stone
-#    - Upgrade smelter
-
-#type and name work as already described above
-
-#updatetime decides how often this factory is ticked to check whether it still has all the materials required, fuel etc.
-#If this is not specified the default option which was specified above will be used. For more details on this option read
-#the explaination next to the default updatetime above
-
-#health determines how much health the factory has and how long it takes for it go in disrepair. If this option is not set,
-#the default_health specified at the beginning of the config will be used
-
-#grace_period determines how long the factory will stay alive while at 0 health. If the factory remains at 0 health for this
-#time period, it will be permanently removed. Repairing the factory once will reset this counter and if this value is not set
-#for a factory, default_grace_period as specified at the start of the config will be used
-
-#decay_amount is the amount of health the factory loses every time factories are damaged by time based decay. The intervall for
-#this damaging is the same for all factories and specified as decay_intervall at the top of the config. If no decay_amount is
-#specified for a factory, default_decay_amount as specified at the top of the config will be used
-
-#fuel specifies which item is used in the furnace to power this factory. You will still need to give the fuel it's own
-#sub identifer here, because it's techincally part of a list of items. If this option is not set, the default fuel specified
-#above will be used.
-
-#fuel_consumption_intervall describes how often fuel is consumed if the factory is running with any recipe. If it is not set,   
-#the default fuel consumption intervall specified above will be used.
-
-#setupcost are the materials the player will need to create this factory. Two factories may not have the exact same setupcost,
-#otherwise there is no way to determine which factory a player actually intended to setup.
-
-#recipes is the option which defines what this FCC actually does, but you are only supposed to list the names of the
-#recipes this factory is meant to run here. The exact functionality of the recipes is defined further below, ensure that the
-#names given to the recipes are identical with the ones used here, even the capitalization has to be the same. The same recipe
-#may be used by multiple factories or exist in the config without being used by any factory.
-
-
-#Additionally it is also possible to upgrade factories, which turns the factory into a completly different one after a specific
-#recipe. To do so, the upgraded version must be added to the list of factories with FCCUPGRADE as the type identifier. Example:
-
-#upgradedsmelter:
-#   type: FCCUPGRADE
-#   name: Upgraded Smelter
-#   updatetime: 2s
-#   fuel:
-#       fuelidentifier:
-#           material: COAL
-#           durability: 1
-#   fuel_consumption_intervall: 10s
-#   recipes:
-#    - Smelt emerald ore
-
-#As you can see this is pretty much identical to a normal factory aside from the type and the fact that an upgraded factory
-#does not specify a setup cost. The actual upgrade cost will be contained in the recipe which is used to upgrade the factory
-
-
-#2. Pipe
-
-#Pipes allow players to transport items over longer distances. This is meant to replace hopper chains, which can have heavy
-#impact on the server performance. The pipes themselves consist of a dropper, which represents the start point of the pipe
-#and it's pumper, a furnace to consume fuel while transporting, the actual pipe consisting of stained glass blocks and a target 
-#block with an inventory.
-
-#An example config for a pipe:
-
-#thisIsAPipeIdentifer123:
-#   type: PIPE
-#   name: Example Pipe
-#   updatetime: 2s
-#   setupcost:
-#       redstone:
-#           material: REDSTONE
-#           amount: 64
-#   fuel:
-#       normalcoal:
-#           material: COAL
-#   fuel_consumption_intervall: 5s
-#   transfer_time_multiplier: 1s
-#   transferamount: 16
-#   glass_color: 1
-#   maximum_length: 32
-
-#type for all pipes must be PIPE and name a unique identifer, standard stuff
-
-#update time specifies how often this factory is ticked, see default_update_time for a detailed description of updatetimes
-#functionality
-
-#setupcost are the items required in the dropper when creating this factory
-
-#fuel specifies the fuel the pipe uses up while transferring, standard as described above
-
-#fuel_consumption_intervall specifies how often fuel is consumed, again this works exactly as described above
-
-#transfer_time_multiplier defines how long the pipe takes to transfer one load of items. The total transportation time scales
-#directly with the length of the pipe and the value specified here multiplied with the length of the pipe (only counting
-#glass blocks) results in the total transportation time per batch. For example if you set this value to one second, a pipe
-#which is 10 blocks long will take 10 seconds to transport a batch of items.
-
-#transferamount is the total amount of items transferred per batch. 
-
-#glass_color is the durability value of the glass this pipe is supposed to have. For a full list see:
-#http://minecraft.gamepedia.com/Stained_Glass#Block_data
-
-#maximum_length defines how long this type of pipe may be at maximum. Length only counts the glass part here and this value
-#may not be bigger than 512. Be aware that allowing many very long pipes might cause performance problems
-
-
-#3. Sorter
-
-#Sorters allow players to sort item from a single dispenser into different other containers. What gets sorted where is
-#completly up to the player, the factory itself only consists of a dispenser and a furnace. The dispenser is the main block of 
-#the factory which contains the items which will be sorted and the blocks in which will be sorted have to be adjacent to it.
-#The furnace simply consumes fuel to power the factory, like it's done for other factories as well. An example config:
-
-#fkIsGonnaLikeThis:
-#   type: SORTER
-#   name: The first sorter
-#   updatetime: 2s
-#   fuel:
-#       normalcoal:
-#           material: COAL
-#   fuel_consumption_intervall: 5s
-#   setupcost:
-#       redblocks:
-#           material: REDSTONE_BLOCK
-#           amount: 64
-#   sort_time: 2s
-#   sort_amount: 32
-#   maximum_materials_per_side: 20
-
-
-# type, name, updatetime, fuel and fuel_consumption_intervall work all exactly as described above
-
-#setupcost are the material requires when setting up this factory
-
-#sort_time is the amount of time it takes for the sorter to sort one batch of items, where one batch is the sort amount specified
-#in the config.
-
-#sort_amount is the amount of items that gets sorted per run
-
-#maximum_materials_per_side is an amount that limits how many items you can assign to a specific side (so the sorter sorts them
-#in this direction)
-
 factories:
   aesthetics:
     type: FCC
@@ -605,7 +210,7 @@ factories:
         material: DIAMOND
         amount: 64
       steel:
-        material: IRON_INGOT
+        material: NETHER_STAR
         amount: 16
         name: Steel Ingot
         lore:
@@ -700,6 +305,7 @@ factories:
      - make_primitive bed
      - make_crates
      - make_sports_balls
+     - make_sports_sticks
      - make_training_sword
      - repair_carpentry
   basic_cauldron:
@@ -753,7 +359,8 @@ factories:
     decay_amount: 104
     recipes:
      - adv_xp_1
-     - nether_star
+     - adv_xp_1c
+     - beacon
      - repair_advanced_cauldron
      - downgrade_to_intermediate_cauldron
   charcoal_factory:
@@ -768,6 +375,7 @@ factories:
     recipes:
       - charcoal_from_planks
       - charcoal_from_coal
+      - charcoal_from_coal_blocks
       - repair_charcoal_factory
   chemistry_factory:
     type: FCC
@@ -870,6 +478,19 @@ factories:
      - upgrade_to_music
      - upgrade_to_charcoal_factory
      - upgrade_to_explosives_factory
+     - upgrade_to_compatibility_factory
+  compatibility:
+    type: FCC
+    name: CivRealms Compatibility Factory
+    citadelBreakReduction: 1.0
+    setupcost:
+      stick:
+        material: STICK
+        amount: 1
+    recipes:
+     - upgrade_old_steel_ingots
+     - upgrade_old_steel_ingots_2
+     - repair_compatibility
   dye_wool:
     type: FCC
     name: Wool Dying Factory
@@ -1184,7 +805,7 @@ factories:
         material: IRON_INGOT
         amount: 64
       steel:
-        material: IRON_INGOT
+        material: NETHER_STAR
         amount: 8
         name: Steel Ingot
         lore:
@@ -1292,13 +913,14 @@ factories:
      - ward
      - 11
      - wait
+     - repair_record_factory
   steel_tools:
     type: FCC
     name: Steel Tool Smith
     citadelBreakReduction: 1.0
     setupcost:
       steel:
-        material: IRON_INGOT
+        material: NETHER_STAR
         amount: 64
         name: Steel Ingot
         lore:
@@ -1316,7 +938,7 @@ factories:
     citadelBreakReduction: 1.0
     setupcost:
       steel:
-        material: IRON_INGOT
+        material: NETHER_STAR
         amount: 96
         name: Steel Ingot
         lore:
@@ -1670,7 +1292,7 @@ recipes:
     input:
       sapling:
         material: SAPLING
-        amount: 48
+        amount: 64
         durability: -1
     output:
       oak_sapling:
@@ -1683,7 +1305,7 @@ recipes:
     input:
       sapling:
         material: SAPLING
-        amount: 48
+        amount: 64
         durability: -1
     output:
       spruce_sapling:
@@ -1697,7 +1319,7 @@ recipes:
     input:
       sapling:
         material: SAPLING
-        amount: 48
+        amount: 64
         durability: -1
     output:
       birch_sapling:
@@ -1711,7 +1333,7 @@ recipes:
     input:
       sapling:
         material: SAPLING
-        amount: 48
+        amount: 64
         durability: -1
     output:
       jungle_sapling:
@@ -1725,7 +1347,7 @@ recipes:
     input:
       sapling:
         material: SAPLING
-        amount: 48
+        amount: 64
         durability: -1
     output:
       acacia_sapling:
@@ -1739,7 +1361,7 @@ recipes:
     input:
       sapling:
         material: SAPLING
-        amount: 48
+        amount: 64
         durability: -1
     output:
       dark_oak_sapling:
@@ -1804,11 +1426,11 @@ recipes:
     input:
       seeds:
         material: SEEDS
-        amount: 720
+        amount: 640
     output:
       outseeds:
         material: BEETROOT_SEEDS
-        amount: 48
+        amount: 32
   seeds_to_carrots:
     type: PRODUCTION
     name: Transform Wheat Seeds into Carrots
@@ -1816,11 +1438,11 @@ recipes:
     input:
       seeds:
         material: SEEDS
-        amount: 720
+        amount: 640
     output:
       outseeds:
         material: CARROT_ITEM
-        amount: 48
+        amount: 32
   seeds_to_potatoes:
     type: PRODUCTION
     name: Transform Wheat Seeds into Potatoes
@@ -1828,11 +1450,11 @@ recipes:
     input:
       seeds:
         material: SEEDS
-        amount: 720
+        amount: 640
     output:
       outseeds:
         material: POTATO_ITEM
-        amount: 48
+        amount: 32
   seeds_to_warts:
     type: PRODUCTION
     name: Transform Wheat Seeds into Netherwarts
@@ -1840,11 +1462,11 @@ recipes:
     input:
       seeds:
         material: SEEDS
-        amount: 720
+        amount: 640
     output:
       outseeds:
         material: NETHER_STALK
-        amount: 48
+        amount: 32
   seeds_to_cocoa:
     type: PRODUCTION
     name: Transform Wheat Seeds into Cocoa
@@ -1852,11 +1474,11 @@ recipes:
     input:
       seeds:
         material: SEEDS
-        amount: 720
+        amount: 640
     output:
       outseeds:
         material: INK_SACK
-        amount: 48
+        amount: 32
         durability: 3
   seeds_to_cacti:
     type: PRODUCTION
@@ -1865,11 +1487,11 @@ recipes:
     input:
       seeds:
         material: SEEDS
-        amount: 720
+        amount: 640
     output:
       outseeds:
         material: CACTUS
-        amount: 48
+        amount: 32
   seeds_to_reeds:
     type: PRODUCTION
     name: Transform Wheat Seeds into Sugarcane
@@ -1877,11 +1499,11 @@ recipes:
     input:
       seeds:
         material: SEEDS
-        amount: 720
+        amount: 640
     output:
       outseeds:
         material: SUGAR_CANE
-        amount: 48
+        amount: 32
   seeds_to_melonseeds:
     type: PRODUCTION
     name: Transform Wheat Seeds into Melon Seeds
@@ -1889,11 +1511,11 @@ recipes:
     input:
       seeds:
         material: SEEDS
-        amount: 720
+        amount: 640
     output:
       outseeds:
         material: MELON_SEEDS
-        amount: 48
+        amount: 32
   seeds_to_pumpkinseeds:
     type: PRODUCTION
     name: Transform Wheat Seeds into Pumpkin Seeds
@@ -1901,11 +1523,11 @@ recipes:
     input:
       seeds:
         material: SEEDS
-        amount: 720
+        amount: 640
     output:
       outseeds:
         material: PUMPKIN_SEEDS
-        amount: 48
+        amount: 32
   pack_ice:
     forceInclude: true
     type: PRODUCTION
@@ -1936,6 +1558,15 @@ recipes:
       Dirt:
         material: DIRT
         amount: 16
+    health_gained: 10000
+  repair_compatibility:
+    production_time: 4s
+    name: Repair Factory
+    type: REPAIR
+    input:
+      STICK:
+        material: STICK
+        amount: 1
     health_gained: 10000
   make_city_bastion:
     production_time: 4s
@@ -2199,9 +1830,11 @@ recipes:
       netherrack:
         material: NETHERRACK
         amount: 64
-      warts:
+      wart:
         material: NETHER_STALK
         amount: 16
+        lore:
+          - Ripe, Hand-Picked
     output:
       brick:
         material: RED_NETHER_BRICK
@@ -2238,9 +1871,11 @@ recipes:
       netherrack:
         material: NETHERRACK
         amount: 64
-      warts:
+      wart:
         material: NETHER_STALK
         amount: 16
+        lore:
+          - Ripe, Hand-Picked
     output:
       brick:
         material: RED_NETHER_BRICK
@@ -2365,9 +2000,11 @@ recipes:
       netherrack:
         material: NETHERRACK
         amount: 64
-      warts:
+      wart:
         material: NETHER_STALK
         amount: 16
+        lore:
+          - Ripe, Hand-Picked
     output:
       brick:
         material: RED_NETHER_BRICK
@@ -3150,6 +2787,22 @@ recipes:
       door:
         material: SPONGE
         amount: 4
+  make_sports_sticks:
+    production_time: 4s
+    name: Make Sports Sticks
+    type: PRODUCTION
+    input:
+      wood:
+        material: WOOD
+        amount: 8
+        durability: -1
+    output:
+      door:
+        material: WOOD_HOE
+        name: Sports Stick
+        lore:
+          - "use with sports balls (sponge) above iron blocks"
+        amount: 4
   make_training_sword:
     production_time: 2s
     name: Make A Training Sword
@@ -3348,10 +3001,10 @@ recipes:
       exp:
         material: EMERALD_BLOCK
         amount: 1
-  nether_star:
+  beacon:
     forceInclude: true
     production_time: 2s
-    name: Make Nether Star
+    name: Make Beacon
     type: PRODUCTION
     input:
       exp:
@@ -3361,8 +3014,8 @@ recipes:
         material: DIAMOND
         amount: 64
     output:
-      nether_star:
-        material: NETHER_STAR
+      beacon:
+        material: BEACON
         amount: 1
   repair_basic_cauldron:
     production_time: 4s
@@ -3550,6 +3203,57 @@ recipes:
       exp:
         material: EMERALD_BLOCK
         amount: 6
+  adv_xp_1c:
+    production_time: 64s
+    name: Make Exp Compacted
+    type: PRODUCTION
+    input:
+      glass_bottle:
+        material: GLASS_BOTTLE
+        amount: 61
+        lore:
+          - Compacted Item
+      carrot:
+        material: CARROT_ITEM
+        amount: 75
+        lore:
+          - Ripe, Hand-Picked
+          - Compacted Item
+      beets:
+        material: BEETROOT
+        amount: 75
+        lore:
+          - Ripe, Hand-Picked
+          - Compacted Item
+      wheat:
+        material: WHEAT
+        amount: 75
+        lore:
+          - Ripe, Hand-Picked
+          - Compacted Item
+      cocoa:
+        material: INK_SACK
+        amount: 50
+        durability: 3
+        lore:
+          - Ripe, Hand-Picked
+          - Compacted Item
+      potato:
+        material: POTATO_ITEM
+        amount: 75
+        lore:
+          - Ripe, Hand-Picked
+          - Compacted Item
+      wart:
+        material: NETHER_STALK
+        amount: 56
+        lore:
+          - Ripe, Hand-Picked
+          - Compacted Item
+    output:
+      exp:
+        material: EMERALD_BLOCK
+        amount: 96
   upgrade_to_advanced_cauldron:
     production_time: 4s
     name: Upgrade to Advanced Experience Factory
@@ -3608,6 +3312,19 @@ recipes:
         material: COAL
         durability: 1
         amount: 32
+  charcoal_from_coal_blocks:
+    production_time: 36s
+    name: Refine Coal Blocks
+    type: PRODUCTION
+    input:
+      coal:
+        material: COAL_BLOCK
+        amount: 64
+    output:
+      charcoal:
+        material: COAL
+        durability: 1
+        amount: 288
   repair_charcoal_factory:
     production_time: 4s
     name: Repair Factory
@@ -4203,7 +3920,7 @@ recipes:
         material: DIAMOND
         amount: 64
       steel:
-        material: IRON_INGOT
+        material: NETHER_STAR
         amount: 16
         name: Steel Ingot
         lore:
@@ -4311,7 +4028,7 @@ recipes:
     type: UPGRADE
     input:
       steel:
-        material: IRON_INGOT
+        material: NETHER_STAR
         amount: 96
         name: Steel Ingot
         lore:
@@ -4323,7 +4040,7 @@ recipes:
     type: UPGRADE
     input:
       steel:
-        material: IRON_INGOT
+        material: NETHER_STAR
         amount: 64
         name: Steel Ingot
         lore:
@@ -4408,6 +4125,15 @@ recipes:
         material: GRAVEL
         amount: 64
     factory: Concrete Mixer
+  upgrade_to_compatibility_factory:
+    production_time: 4s
+    name: Recipe for Compatibility Factory
+    type: UPGRADE
+    input:
+      stick:
+        material: STICK
+        amount: 1
+    factory: CivRealms Compatibility Factory
   upgrade_to_bio_lab:
     production_time: 4s
     name: Recipe for Bio Lab
@@ -4440,7 +4166,7 @@ recipes:
         material: IRON_INGOT
         amount: 64
       steel:
-        material: IRON_INGOT
+        material: NETHER_STAR
         amount: 8
         name: Steel Ingot
         lore:
@@ -6326,6 +6052,461 @@ recipes:
         amount: 2
         lore:
           - Just like mama used to make!
+  crack_fossil:
+    type: RANDOM
+    name: Crack Fossil
+    production_time: 1s
+    fuel_consumption_intervall: 99999s
+    input:
+      fossil:
+        material: PRISMARINE_SHARD
+        amount: 1
+        name: ยง3Fossil
+        lore:
+          - Crack me in a factory for a prize!
+    outputs:
+      gezo:
+        chance: 0.0000040909
+        gezo:
+          material: PAPER
+          amount: 1
+          lore:
+           - Gezo was here !!!
+      clockback:
+        chance: 0.0000040909
+        clockback:
+          material: WATCH
+          amount: 1
+          lore:
+           - Clockback
+          enchants:
+            kb:
+              enchant: KNOCKBACK
+              level: 3
+      apollo_bow:
+        chance: 0.0000040909
+        apollo_bow:
+          material: BOW
+          amount: 1
+          lore:
+           - Apollo's Bow
+          enchants:
+            power:
+              enchant: ARROW_DAMAGE
+              level: 5
+            ub:
+              enchant: DURABILITY
+              level: 3
+            flame:
+              enchant: ARROW_FIRE
+              level: 1
+            infinity:
+              enchant: ARROW_INFINITE
+              level: 1
+      imcando_pick:
+        chance: 0.0000040909
+        imcando_pick:
+          material: DIAMOND_PICKAXE
+          amount: 1
+          lore:
+           - Imcando Pickaxe
+          enchants:
+            efficiency:
+              enchant: DIG_SPEED
+              level: 5
+            ub:
+              enchant: DURABILITY
+              level: 3
+      power_5_book:
+        chance: 0.0000120909
+        power_5_book:
+          material: ENCHANTED_BOOK 
+          amount: 1
+          stored_enchants:
+            power5:
+              enchant: ARROW_DAMAGE
+              level: 5
+      infinity_book:
+        chance: 0.0000120909
+        infinity_book:
+          material: ENCHANTED_BOOK 
+          amount: 1
+          stored_enchants:
+            infinity:
+              enchant: ARROW_INFINITE
+              level: 1
+      efficiency_5_book:
+        chance: 0.0000120909
+        efficiency_5_book:
+          material: ENCHANTED_BOOK 
+          amount: 1
+          stored_enchants:
+            eff5:
+              enchant: DIG_SPEED
+              level: 5
+      unbreaking_3_book:
+        chance: 0.0000120909
+        unbreaking_3_book:
+          material: ENCHANTED_BOOK 
+          amount: 1
+          stored_enchants:
+            ub3:
+              enchant: DURABILITY
+              level: 3
+      sharpness_5_book:
+        chance: 0.0000120909
+        sharpness_5_book:
+          material: ENCHANTED_BOOK 
+          amount: 1
+          stored_enchants:
+            sharpness5:
+              enchant: DAMAGE_ALL
+              level: 5
+      protection_4_book:
+        chance: 0.0000120909
+        protection_4_book:
+          material: ENCHANTED_BOOK 
+          amount: 1
+          stored_enchants:
+            protection4:
+              enchant: PROTECTION_ENVIRONMENTAL
+              level: 4
+      silk_touch_book:
+        chance: 0.0000110909
+        silk_touch_book:
+          material: ENCHANTED_BOOK 
+          amount: 1
+          stored_enchants:
+            silktouch:
+              enchant: SILK_TOUCH
+              level: 1
+      diamond_horse_armor:
+        chance: 0.000037038
+        diamond_horse_armor:
+          material: DIAMOND_BARDING
+          amount: 1
+      diamond_pickaxe:
+        chance: 0.000037037
+        diamond_pickaxe:
+          material: DIAMOND_PICKAXE
+          amount: 1
+      diamond_axe:
+        chance: 0.000037037
+        diamond_axe:
+          material: DIAMOND_AXE
+          amount: 1
+      diamond_shovel:
+        chance: 0.000037037
+        diamond_shovel:
+          material: DIAMOND_SPADE
+          amount: 1
+      diamond_chestplate:
+        chance: 0.000037037
+        diamond_chestplate:
+          material: DIAMOND_CHESTPLATE
+          amount: 1
+      diamond_leggings:
+        chance: 0.000037037
+        diamond_leggings:
+          material: DIAMOND_LEGGINGS
+          amount: 1
+      diamond_helmet:
+        chance: 0.000037037
+        diamond_helmet:
+          material: DIAMOND_HELMET
+          amount: 1
+      diamond_boots:
+        chance: 0.000037037
+        diamond_boots:
+          material: DIAMOND_BOOTS
+          amount: 1
+      iron_ingots:
+        chance: 0.000037037
+        iron_ingots:
+          material: IRON_INGOT
+          amount: 64
+      diamond_block:
+        chance: 0.000037037
+        diamond_block:
+          material: DIAMOND_BLOCK
+          amount: 1
+      creeper:
+        chance: 0.000037037
+        creeper:
+          material: MONSTER_EGG
+          amount: 1
+          durability: 50
+      zombie:
+        chance: 0.000037037
+        zombie:
+          material: MONSTER_EGG
+          amount: 1
+          durability: 54
+      skeleton:
+        chance: 0.000037037
+        skeleton:
+          material: MONSTER_EGG
+          amount: 1
+          durability: 51
+      spider:
+        chance: 0.000037037
+        spider:
+          material: MONSTER_EGG
+          amount: 1
+          durability: 52
+      blaze:
+        chance: 0.000037037
+        blaze:
+          material: MONSTER_EGG
+          amount: 1
+          durability: 61
+      ghast:
+        chance: 0.000037037
+        ghast:
+          material: MONSTER_EGG
+          amount: 1
+          durability: 56
+      guardian:
+        chance: 0.000037037
+        guardian:
+          material: MONSTER_EGG
+          amount: 1
+          durability: 68
+      magmacube:
+        chance: 0.000037037
+        magmacube:
+          material: MONSTER_EGG
+          amount: 1
+          durability: 62
+      slime:
+        chance: 0.000037037
+        slime:
+          material: MONSTER_EGG
+          amount: 1
+          durability: 55
+      witch:
+        chance: 0.000037037
+        witch:
+          material: MONSTER_EGG
+          amount: 1
+          durability: 66
+      villager:
+        chance: 0.000037037
+        villager:
+          material: MONSTER_EGG
+          amount: 1
+          durability: 120
+      cavespider:
+        chance: 0.000037037
+        cavespider:
+          material: MONSTER_EGG
+          amount: 1
+          durability: 59
+      enderman:
+        chance: 0.000037037
+        enderman:
+          material: MONSTER_EGG
+          amount: 1
+          durability: 58
+      zombiepigman:
+        chance: 0.000037037
+        zombiepigman:
+          material: MONSTER_EGG
+          amount: 1
+          durability: 57
+      charcoal:
+        chance: 0.000037037
+        charcoal:
+          material: COAL
+          amount: 2048
+          durability: 1
+      beacon:
+        chance: 0.000037037
+        beacon:
+          material: BEACON
+          amount: 1
+      iron_pickaxe:
+        chance: 0.0029411764
+        iron_pickaxe:
+          material: IRON_PICKAXE
+          amount: 1
+      iron_spade:
+        chance: 0.00029411764
+        iron_spade:
+          material: IRON_SPADE
+          amount: 1
+      iron_axe:
+        chance: 0.00029411764
+        iron_axe:
+          material: IRON_AXE
+          amount: 1
+      iron_sword:
+        chance: 0.00029411764
+        iron_sword:
+          material: IRON_SWORD
+          amount: 1
+      note_blocks:
+        chance: 0.00029411764
+        note_blocks:
+          material: NOTE_BLOCK
+          amount: 5
+      diamond:
+        chance: 0.00029411764
+        diamond:
+          material: DIAMOND
+          amount: 1
+      emerald:
+        chance: 0.00029411764
+        emerald:
+          material: EMERALD
+          amount: 1
+      iron_block:
+        chance: 0.00029411764
+        iron_block:
+          material: IRON_BLOCK
+          amount: 1
+      redstone_block:
+        chance: 0.00029411764
+        redstone_block:
+          material: REDSTONE_BLOCK
+          amount: 1
+      lapis_block:
+        chance: 0.00029411764
+        lapis_block:
+          material: LAPIS_BLOCK
+          amount: 1
+      record_13:
+        chance: 0.000029411766
+        record_13:
+          material: GOLD_RECORD
+          amount: 1
+      record_cats:
+        chance: 0.000029411764
+        record_cats:
+          material: GREEN_RECORD
+          amount: 1
+      record_blocks:
+        chance: 0.000029411764
+        record_blocks:
+          material: RECORD_3
+          amount: 1
+      record_chirp:
+        chance: 0.000029411764
+        record_chirp:
+          material: RECORD_4
+          amount: 1
+      record_far:
+        chance: 0.000029411764
+        record_far:
+          material: RECORD_5
+          amount: 1
+      record_mall:
+        chance: 0.000029411764
+        record_mall:
+          material: RECORD_6
+          amount: 1
+      record_mellohi:
+        chance: 0.000029411764
+        record_mellohi:
+          material: RECORD_7
+          amount: 1
+      record_stal:
+        chance: 0.000029411764
+        record_stal:
+          material: RECORD_8
+          amount: 1
+      record_strad:
+        chance: 0.000029411764
+        record_strad:
+          material: RECORD_9
+          amount: 1
+      record_ward:
+        chance: 0.000029411764
+        record_ward:
+          material: RECORD_10
+          amount: 1
+      record_11:
+        chance: 0.000029411764
+        record_11:
+          material: RECORD_11
+          amount: 1
+      record_wait:
+        chance: 0.000029411764
+        record_wait:
+          material: RECORD_12
+          amount: 1
+      minecart:
+        chance: 0.00062352939
+        minecart:
+          material: MINECART
+          amount: 1
+      mooshroom:
+        chance: 0.00029411764
+        mooshroom:
+          material: MONSTER_EGG
+          amount: 1
+          durability: 96
+      horse:
+        chance: 0.00029411764
+        horse:
+          material: MONSTER_EGG
+          amount: 1
+          durability: 100
+      rabbit:
+        chance: 0.00029411764
+        rabbit:
+          material: MONSTER_EGG
+          amount: 1
+          durability: 101
+      ocelot:
+        chance: 0.00029411764
+        ocelot:
+          material: MONSTER_EGG
+          amount: 1
+          durability: 98
+      squid:
+        chance: 0.00029411764
+        squid:
+          material: MONSTER_EGG
+          amount: 1
+          durability: 94
+      wolf:
+        chance: 0.00029411764
+        wolf:
+          material: MONSTER_EGG
+          amount: 1
+          durability: 95
+      iron_horse_armor:
+        chance: 0.00029411764
+        iron_horse_armor:
+          material: IRON_BARDING
+          amount: 1
+      bucket:
+        chance: 0.00029411764
+        bucket:
+          material: BUCKET
+          amount: 1
+      prismarine_shards:
+        chance: 0.00029411764
+        prismarine_shards:
+          material: PRISMARINE_SHARD
+          amount: 5
+      prismarine_crystals:
+        chance: 0.00029411788
+        prismarine_crystals:
+          material: PRISMARINE_CRYSTALS
+          amount: 3
+      jukebox:
+        chance: 0.00029411764
+        jukebox:
+          material: JUKEBOX
+          amount: 1
+      dirt:
+        chance: 0.9889
+        dirt:
+          material: DIRT
+          amount: 1
+          name: Dirt!
   make_iron_armor_sets:
     production_time: 4s
     name: Make Chain Armor Sets
@@ -6832,6 +7013,7 @@ recipes:
       wood:
         material: WOOD
         amount: 64
+        durability: -1
       lapis:
         material: INK_SACK
         durability: 4
@@ -6848,6 +7030,7 @@ recipes:
       wood:
         material: WOOD
         amount: 64
+        durability: -1
       diamond:
         material: LAPIS_BLOCK
         amount: 8
@@ -6863,6 +7046,7 @@ recipes:
       stone:
         material: WOOD
         amount: 32
+        durability: -1
       quartz:
         material: QUARTZ_BLOCK
         amount: 32
@@ -6881,6 +7065,7 @@ recipes:
       stone:
         material: WOOD
         amount: 64
+        durability: -1
       quartz:
         material: REDSTONE
         amount: 8
@@ -7243,7 +7428,7 @@ recipes:
         material: IRON_INGOT
         amount: 128
       steel:
-        material: IRON_INGOT
+        material: NETHER_STAR
         amount: 16
         name: Steel Ingot
         lore:
@@ -7267,7 +7452,7 @@ recipes:
         material: IRON_INGOT
         amount: 32
       steel:
-        material: IRON_INGOT
+        material: NETHER_STAR
         amount: 4
         name: Steel Ingot
         lore:
@@ -7288,7 +7473,7 @@ recipes:
         material: IRON_INGOT
         amount: 18
       steel:
-        material: IRON_INGOT
+        material: NETHER_STAR
         amount: 2
         name: Steel Ingot
         lore:
@@ -7309,7 +7494,7 @@ recipes:
         material: IRON_INGOT
         amount: 18
       steel:
-        material: IRON_INGOT
+        material: NETHER_STAR
         amount: 2
         name: Steel Ingot
         lore:
@@ -7342,7 +7527,7 @@ recipes:
         material: IRON_INGOT
         amount: 8
       steel:
-        material: IRON_INGOT
+        material: NETHER_STAR
         amount: 1
         name: Steel Ingot
         lore:
@@ -7369,7 +7554,7 @@ recipes:
         material: IRON_INGOT
         amount: 256
       steel:
-        material: IRON_INGOT
+        material: NETHER_STAR
         amount: 16
         name: Steel Ingot
         lore:
@@ -7507,6 +7692,44 @@ recipes:
         material: IRON_INGOT
         amount: 12
     health_gained: 10000
+  upgrade_old_steel_ingots:
+    production_time: 1s
+    fuel_consumption_intervall: 99999s
+    name: Upgrade old style steel ingots to new
+    type: PRODUCTION
+    input:
+      iron:
+        material: IRON_INGOT
+        amount: 1
+        name: Steel Ingot
+        lore:
+          - An alloy of carbon and iron
+    output:
+      steel:
+        material: NETHER_STAR
+        amount: 1
+        name: Steel Ingot
+        lore:
+          - An alloy of carbon and iron
+  upgrade_old_steel_ingots_2:
+    production_time: 1s
+    fuel_consumption_intervall: 99999s
+    name: Upgrade stacks of old style steel ingots to new
+    type: PRODUCTION
+    input:
+      iron:
+        material: IRON_INGOT
+        amount: 64
+        name: Steel Ingot
+        lore:
+          - An alloy of carbon and iron
+    output:
+      steel:
+        material: NETHER_STAR
+        amount: 64
+        name: Steel Ingot
+        lore:
+          - An alloy of carbon and iron
   refine_steel:
     production_time: 4s
     name: Carburize Iron into Steel
@@ -7525,7 +7748,7 @@ recipes:
         amount: 2
     output:
       steel:
-        material: IRON_INGOT
+        material: NETHER_STAR
         amount: 1
         name: Steel Ingot
         lore:
@@ -7947,7 +8170,7 @@ recipes:
     input:
       sulfur:
         material: GLOWSTONE_DUST
-        amount: 164
+        amount: 64
         name: Sulfur
       coal:
         material: COAL
@@ -7969,7 +8192,7 @@ recipes:
     input:
       sulfur:
         material: GLOWSTONE_DUST
-        amount: 164
+        amount: 64
         name: Sulfur
       coal:
         material: COAL
@@ -7991,7 +8214,7 @@ recipes:
     input:
       sulfur:
         material: GLOWSTONE_DUST
-        amount: 164
+        amount: 64
         name: Sulfur
       coal:
         material: COAL
@@ -8013,7 +8236,7 @@ recipes:
     input:
       sulfur:
         material: GLOWSTONE_DUST
-        amount: 164
+        amount: 64
         name: Sulfur
       coal:
         material: COAL
@@ -8035,7 +8258,7 @@ recipes:
     input:
       sulfur:
         material: GLOWSTONE_DUST
-        amount: 164
+        amount: 64
         name: Sulfur
       coal:
         material: COAL
@@ -8057,7 +8280,7 @@ recipes:
     input:
       sulfur:
         material: GLOWSTONE_DUST
-        amount: 164
+        amount: 64
         name: Sulfur
       coal:
         material: COAL
@@ -8079,7 +8302,7 @@ recipes:
     input:
       sulfur:
         material: GLOWSTONE_DUST
-        amount: 164
+        amount: 64
         name: Sulfur
       coal:
         material: COAL
@@ -8101,7 +8324,7 @@ recipes:
     input:
       sulfur:
         material: GLOWSTONE_DUST
-        amount: 164
+        amount: 64
         name: Sulfur
       coal:
         material: COAL
@@ -8123,7 +8346,7 @@ recipes:
     input:
       sulfur:
         material: GLOWSTONE_DUST
-        amount: 164
+        amount: 64
         name: Sulfur
       coal:
         material: COAL
@@ -8145,7 +8368,7 @@ recipes:
     input:
       sulfur:
         material: GLOWSTONE_DUST
-        amount: 164
+        amount: 64
         name: Sulfur
       coal:
         material: COAL
@@ -8167,7 +8390,7 @@ recipes:
     input:
       sulfur:
         material: GLOWSTONE_DUST
-        amount: 164
+        amount: 64
         name: Sulfur
       coal:
         material: COAL
@@ -8189,7 +8412,7 @@ recipes:
     input:
       sulfur:
         material: GLOWSTONE_DUST
-        amount: 164
+        amount: 64
         name: Sulfur
       coal:
         material: COAL
@@ -8204,13 +8427,25 @@ recipes:
       record:
         material: RECORD_12
         amount: 1
+  repair_record_factory:
+    production_time: 4s
+    name: Repair Factory
+    type: REPAIR
+    input:
+      tears:
+        material: WATER_BUCKET
+        amount: 2
+        name: Doxxer Tears
+        lore:
+          - :(
+    health_gained: 10000
   make_steel_armor_sets:
     production_time: 4s
     name: Make Steel Armor Sets
     type: PRODUCTION
     input:
       iron:
-        material: IRON_INGOT
+        material: NETHER_STAR
         amount: 48
         name: Steel Ingot
         lore:
@@ -8295,14 +8530,11 @@ recipes:
     type: PRODUCTION
     input:
       steel:
-        material: IRON_INGOT
+        material: NETHER_STAR
         amount: 24
         name: Steel Ingot
         lore:
           - An alloy of carbon and iron
-      sand:
-        material: SAND
-        amount: 32
       wool:
         material: WOOL
         amount: 32
@@ -8326,7 +8558,7 @@ recipes:
     type: PRODUCTION
     input:
       iron:
-        material: IRON_INGOT
+        material: NETHER_STAR
         amount: 48
         name: Steel Ingot
         lore:
@@ -8359,7 +8591,7 @@ recipes:
     type: PRODUCTION
     input:
       iron:
-        material: IRON_INGOT
+        material: NETHER_STAR
         amount: 48
         name: Steel Ingot
         lore:
@@ -8392,7 +8624,7 @@ recipes:
     type: PRODUCTION
     input:
       iron:
-        material: IRON_INGOT
+        material: NETHER_STAR
         amount: 48
         name: Steel Ingot
         lore:
@@ -8425,7 +8657,7 @@ recipes:
     type: PRODUCTION
     input:
       iron:
-        material: IRON_INGOT
+        material: NETHER_STAR
         amount: 48
         name: Steel Ingot
         lore:
@@ -8456,7 +8688,7 @@ recipes:
     type: PRODUCTION
     input:
       iron: 
-        material: IRON_INGOT
+        material: NETHER_STAR
         amount: 16
         name: Steel Ingot
         lore:
@@ -8481,7 +8713,7 @@ recipes:
     type: PRODUCTION
     input:
       iron:
-        material: IRON_INGOT
+        material: NETHER_STAR
         amount: 16
         name: Steel Ingot
         lore:
@@ -8503,7 +8735,7 @@ recipes:
     type: PRODUCTION
     input:
       iron:
-        material: IRON_INGOT
+        material: NETHER_STAR
         amount: 16
         name: Steel Ingot
         lore:
@@ -8529,7 +8761,7 @@ recipes:
     type: PRODUCTION
     input:
       steel:
-        material: IRON_INGOT
+        material: NETHER_STAR
         amount: 8
         name: Steel Ingot
         lore:
@@ -8554,7 +8786,7 @@ recipes:
     type: PRODUCTION
     input:
       iron:
-        material: IRON_INGOT
+        material: NETHER_STAR
         amount: 16
         name: Steel Ingot
         lore:
@@ -8579,7 +8811,7 @@ recipes:
     type: REPAIR
     input:
       steel:
-        material: IRON_INGOT
+        material: NETHER_STAR
         amount: 12
         name: Steel Ingot
         lore:
@@ -8591,7 +8823,7 @@ recipes:
     type: REPAIR
     input:
       steel:
-        material: IRON_INGOT
+        material: NETHER_STAR
         amount: 12
         name: Steel Ingot
         lore:
