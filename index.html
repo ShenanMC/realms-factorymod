@@ -38,7 +38,7 @@
 		var totalHealth;
 
 		$(document).ready(() => {
-			$.get("https://raw.githubusercontent.com/CivClassic/Configs/master/FactoryMod/config.yml", (data) => {
+			$.get("https://raw.githubusercontent.com/Shenanigans-MC/realms-factorymod/master/factoryConfig.yml", (data) => {
 				config = YAML.parse(data);
 				factories = config.factories;
 				recipes = config.recipes;
